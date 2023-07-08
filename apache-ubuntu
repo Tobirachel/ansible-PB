@@ -1,0 +1,30 @@
+- name: Install Apache and Configure Virtual Host
+  hosts: docker
+  become: yes
+  vars:
+    http_host: 54.183.42.215
+
+  tasks:
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+        cache_valid_time: 3600
+
+    - name: Install Apache packages
+      apt:
+        name: apache2
+        state: present
+
+    - name: Enable Apache service
+      service:
+        name: apache2
+        state: started
+        enabled: yes
+
+    - name: Create document root for the configured domain
+      file:
+        path: "/var/www/{{ http_host }}"
+        state: directory
+        mode: '0755'
+        owner: www-data
+        group: www-data
